@@ -1,101 +1,66 @@
-## Case study 3: Audio visualiser
+Interactive Music Visualisation Suite
 
-In this case study you will be completing a simple music visualisation
-program that contains three separate visualisations.
+A sophisticated real-time audio visualizer that transforms sound into diverse geometric and abstract patterns. Built with p5.js, this project utilizes Fast Fourier Transform (FFT) analysis to map different frequency bands (bass, mid, treble) to visual parameters.
 
-To turn the sound into something that can be visualised p5.js provides
-a Fast Fourier Transform object. Take a look at its description in the
-[p5.sound documentation](https://p5js.org/reference/#/p5.FFT).
+- Fetured Visualisations
+Rave Tunnel: A pseudo-3D experience with three distinct modes: 3D Blocks, Shard Explosion, and Hex Tunnel. It reacts to bass for radius pulsing and treble for flashing.
 
-For todays exercise you don’t need to be able to understand the full
-technicalities of this object or its methods. However, in putting
-this case study together we have used the following methods.
+Beat Tiles Rush: A rhythm-game inspired visualizer where tiles fall from the top of the screen synced to the beat.
 
-- `FFT.analyze()` returns an array of 1024 values between 0 and 255. Each value represents the amplitude (loudness) of a small frequency range (pitch of the sound).
+Circular Waveform: A radial frequency display featuring a "vinyl record" aesthetic with particle systems that respond to specific energy levels.
 
-- `FFT.waveform()` returns an array of 1024 values between -1
-  and 1. Each value represents the amplitude of the sound for a tiny
-  portion of time.
+Block Mid High Low: Uses Perlin noise lines and 3D primitives (spheres, cubes, stars) to represent different frequency ranges.
 
-- `FFT.energy(freq1, [freq2])` returns the volume of the sound at
-  frequency range specified by the `freq1` and `freq2` parameter. You
-  can specify `freq1` as a number or p5.js provides strings for common
-  values such as “bass” and “treble”, and leave `freq2` empty.
+Color Blast: An energetic visualizer featuring expanding color splashes, strobe flashes, and depth rings triggered by beat detection.
 
-### Tasks
+Spectrum: A classic bar-style frequency analyzer with support for both horizontal and vertical orientations and mirrored modes.
 
-Download the music visualiser project template from the bottom of this
-page and look over the code.
+- Technical Architecture
+The project is built on a modular Object-Oriented architecture, making it easy to add new visualizations without modifying the core engine.
 
-#### Playback and fullscreen [2 marks]
+Core Components
+Visualisations.js (Manager): Acts as a container for all visualizer objects. It handles the switching logic and ensures that only the selected visualizer is active and rendering.
 
-In the `ControlsAndInput` constructor function (in the
-controlsAndInput.js file) complete `this.mousePressed()`.
+Sketch.js (Engine): The main entry point that initializes the canvas, handles global assets like audio files, and runs the main p5.js draw loop.
 
-- Using the `playbackButton` object check if the mouse click is on the
-  play button (check out the `PlaybackButton` constructor function and
-  find the method which does this). When you have called this method
-  clicking the playback button should start the music and display a
-  visualisation.
-- If the click isn’t on the playback button toggle the display between
-  window and fullscreen (check out the p5.js documentation on how to
-  do this.)
+FFT Analysis: Uses p5.FFT to analyze the audio spectrum into 1024 bins, which are then grouped into bass, mid, and treble for easier mapping.
 
-#### Visualisation menu [2 marks]
+GUI & Interactivity
+Each visualization includes a dedicated Dat.GUI or custom interface, allowing users to tweak parameters in real-time, such as:
 
-In the `ControlsAndInput` constructor function complete
-`this.menu()`. Write a `for` loop that iterates over the array stored
-in the `visuals` property of the `Visualisations` object, which itself
-is stored in the global `vis` variable declared in sketch.js, writing
-each visualisation name to the screen. You can check if your menu is
-displayed correctly by pressing the space bar while the app is
-running. When complete it should look like the following:
+Color palettes and saturation.
 
-![menu](https://www.doc.gold.ac.uk/~jfort010/ip/case-studies/music-vis/figures/menu.png)
+Sensitivity thresholds for beat detection.
 
-#### Spectrum analyser [4 marks]
+Particle lifespans and speeds.
 
-Take a look at the `Spectrum()` constructor function. The fast Fourier
-transform analyse function (i.e. `p5.FFT.analyse()`) returns an array of
-amplitude values for 1024 audible frequency values. The amplitude
-value is between 0 and 255. The visualisation draws a rectangle for
-each of these frequencies, the height of the rectangle is determined
-by the amplitude value for that frequency.
+Visualization-specific modes (e.g., Hex vs. Shard in Rave Tunnel).
 
-- Change the visualisation so that visualisation is horizontal not
-  vertical. Therefore, the bars emerge from the left hand side of the
-  screen not from the bottom, as in the following image. [2 marks]
+- Installation & Setup
+Clone the repository:
 
-  ![menu](https://www.doc.gold.ac.uk/~jfort010/ip/case-studies/music-vis/figures/spec.png)
+Bash
+git clone https://github.com/your-username/music-vis-suite.git
+Add your audio:
+Place your .mp3 files in the assets/ folder.
 
-- Change the colour of each bar such that it gradually changes from
-  green to red based on the amplitude value [2 marks]. For example
-  - An amplitude value of 0 the colour values are R:0, G:255 and B:0.
-  - An amplitude value of 127 colour values are R:127, G:127 and B:0
-  - An amplitude value of 255 colour values are R:255, G:0 and B: 0
+Run locally:
+Since this project fetches local assets (audio and scripts), you must run it through a local server to avoid CORS issues.
 
-- HINT: You will need to map the amplitude so that smaller values
-  are more green. The red channel doesn’t need to be mapped you can
-  use the raw amplitude value.
+VS Code: Use the Live Server extension.
 
-#### Needle plots [2 marks]
+Terminal: Run npx serve or python -m http.server.
 
-The `Needles` constructor function draws a visualisation that displays
-volume values for 4 frequency bands: bass, mid-low, mid-high and
-treble. When it is complete it looks like the image below:
+- Controls
+Spacebar: Play / Pause the audio.
 
-![menu](https://www.doc.gold.ac.uk/~jfort010/ip/case-studies/music-vis/figures/needles.png)
+Mouse Click: Interact with specific visualizers (like the Circular Waveform attraction) or UI buttons.
 
-All the trigonometry has been done for you :)
+GUI Panels: Use the sliders on the top-right to customize the current visual.
 
-Within the needles.js file, complete the nested `for` loop in the
-`this.draw()` function.
+- Design Patterns Used
+State Pattern: Used to manage the transition between different visualization states and modes.
 
-- Assign values to the `x`, `y`, `w` and `h` variables so the plot is
-  drawn at the right location and correct size.
-- On line 49 call the `this.ticks(centreX, bottomY, freqLabel)`
-  function correctly specifying the arguments. This will add the ticks
-  to the graph. The comments above the `ticks` function should help
-  you work out what each parameter does.
-- On line 54 call the `this.needle(energy, centreX, bottomY)`
-  function. Specifying the correct parameters.
+Observer-like Management: The Visualisations class manages the lifecycle (setup, draw, unselect) of each visualizer.
+
+Perlin Noise: Utilized in the blockMidHighLow visualizer to create organic, non-linear movements that feel more "natural" than pure randomness.
